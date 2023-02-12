@@ -32,4 +32,12 @@ contract CryptoDevsTest is Test {
         testContract.startPresale();
         assertEq(testContract.presaleStarted(), true);
     }
+
+    function testMintPresaleNotEndedFail() public {
+        assertEq(testContract.presaleStarted(), false);
+        testContract.startPresale();
+        assertEq(testContract.presaleStarted(), true);
+        vm.expectRevert("Presale has not ended yet");
+        testContract.mint();
+    }
 }
