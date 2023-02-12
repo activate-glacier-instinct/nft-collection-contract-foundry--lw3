@@ -40,4 +40,16 @@ contract CryptoDevsTest is Test {
         vm.expectRevert("Presale has not ended yet");
         testContract.mint();
     }
+
+    function testMintPresaleEndedSuccess() public {
+        assertEq(testContract.presaleStarted(), false);
+        testContract.startPresale();
+        assertEq(testContract.presaleStarted(), true);
+        vm.expectRevert("Presale has not ended yet");
+        testContract.mint();
+        uint256 sixMinutesFromNow = block.timestamp + 6 minutes;
+        vm.warp(sixMinutesFromNow); // Increase blocktime by 10min
+        vm.expectRevert("Ether sent is not correct");
+        testContract.mint();
+    }
 }
