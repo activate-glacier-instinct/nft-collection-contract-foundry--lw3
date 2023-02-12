@@ -19,4 +19,17 @@ contract CryptoDevsTest is Test {
     function testContractInit() public {
         assertEq(testContract.maxTokenIds(), 20);
     }
+
+    function testMintPresaleNotStartedFail() public {
+        assertEq(testContract.presaleStarted(), false);
+
+        vm.expectRevert("Presale has not ended yet");
+        testContract.mint();
+    }
+
+    function testStartPresale() public {
+        assertEq(testContract.presaleStarted(), false);
+        testContract.startPresale();
+        assertEq(testContract.presaleStarted(), true);
+    }
 }
