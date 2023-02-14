@@ -1,0 +1,6 @@
+CryptoDevsTest:testContract():(address) (gas: 2403)
+CryptoDevsTest:testContractInit() (gas: 7582)
+CryptoDevsTest:testMintPresaleEndedSuccess() (gas: 53246)
+CryptoDevsTest:testMintPresaleNotEndedFail() (gas: 42812)
+CryptoDevsTest:testMintPresaleNotStartedFail() (gas: 13637)
+CryptoDevsTest:testStartPresale() (gas: 36758)
