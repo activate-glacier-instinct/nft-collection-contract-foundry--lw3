@@ -52,4 +52,10 @@ contract CryptoDevsTest is Test {
         vm.expectRevert("Ether sent is not correct");
         testContract.mint();
     }
+
+    function testSetPaused() public {
+        assertEq(testContract._paused(), false);
+        testContract.setPaused(true);
+        assertEq(testContract._paused(), true);
+    }
 }
