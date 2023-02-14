@@ -35,10 +35,7 @@ Writen in Foundry
 <!-- ```
 npm i
 ```
-
-### More
-
-See [Sveltekit install](./docs/CREATE_SVELTE_README.md). -->
+-->
 
 ## Usage
 
