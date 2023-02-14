@@ -58,4 +58,10 @@ contract CryptoDevsTest is Test {
         testContract.setPaused(true);
         assertEq(testContract._paused(), true);
     }
+
+    function testMintWhenPausedFail() public {
+        testSetPaused();
+        vm.expectRevert("Contract currently paused");
+        testContract.mint();
+    }
 }
