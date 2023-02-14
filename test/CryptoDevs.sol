@@ -64,4 +64,9 @@ contract CryptoDevsTest is Test {
         vm.expectRevert("Contract currently paused");
         testContract.mint();
     }
+
+    function testPresaleMintPresaleNotStartedFail() public {
+        vm.expectRevert("Presale is not running");
+        testContract.presaleMint();
+    }
 }
