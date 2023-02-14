@@ -69,4 +69,12 @@ contract CryptoDevsTest is Test {
         vm.expectRevert("Presale is not running");
         testContract.presaleMint();
     }
+
+    function testPresaleMintPresaleNotWhitelistedFail() public {
+        testContract.startPresale();
+        vm.expectRevert("You are not whitelisted");
+        // TODO : fix failing test
+        vm.prank(address(1));
+        testContract.presaleMint();
+    }
 }
