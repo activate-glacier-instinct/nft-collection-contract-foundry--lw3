@@ -14,6 +14,8 @@ build:; forge build
 
 run-test :; forge test 
 
+run-test-verbose :; forge test -vvvv
+
 run-test--cov :; forge coverage > coverage.txt
 
 snapshot :; forge snapshot

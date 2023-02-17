@@ -3,46 +3,48 @@ pragma solidity ^0.8.13;
 
 import "forge-std/src/Test.sol";
 import "../src/CryptoDevs.sol";
+import "./MockWhitelist.sol";
 
 
 contract CryptoDevsTest is Test {
-    CryptoDevs public testContract;
+    CryptoDevs public _cryptoDevs;
+    MockWhitelist private _mockWhitelist;
     address private whitelistContractAddr;
     string private metaDataURL;
 
     function setUp() public {
-        whitelistContractAddr = makeAddr('0xab747b92377f3eF8B2A6646af066Ab0947E19c18');
         metaDataURL = 'testurl';
-        testContract = new CryptoDevs(metaDataURL, whitelistContractAddr);
+        _mockWhitelist = new MockWhitelist();
+        _cryptoDevs = new CryptoDevs(metaDataURL, address(_mockWhitelist));
     }
 
     function testContractInit() public {
-        assertEq(testContract.maxTokenIds(), 20);
+        assertEq(_cryptoDevs.maxTokenIds(), 20);
     }
 
     function testMintPresaleNotStartedFail() public {
-        assertEq(testContract.presaleStarted(), false);
+        assertEq(_cryptoDevs.presaleStarted(), false);
 
         vm.expectRevert("Presale has not ended yet");
-        testContract.mint();
+        _cryptoDevs.mint();
     }
 
     function testStartPresale() public {
-        assertEq(testContract.presaleStarted(), false);
-        testContract.startPresale();
-        assertEq(testContract.presaleStarted(), true);
+        assertEq(_cryptoDevs.presaleStarted(), false);
+        _cryptoDevs.startPresale();
+        assertEq(_cryptoDevs.presaleStarted(), true);
     }
 
     function testPresaleEnded() public {
         testStartPresale();
         uint256 fiveMinutesFromNow = block.timestamp + 5 minutes;
-        assertEq(testContract.presaleEnded(), fiveMinutesFromNow);
+        assertEq(_cryptoDevs.presaleEnded(), fiveMinutesFromNow);
     }
 
     function testMintPresaleNotEndedFail() public {
         testStartPresale();
         vm.expectRevert("Presale has not ended yet");
-        testContract.mint();
+        _cryptoDevs.mint();
     }
 
     function testMintPresaleEndedSuccess() public {
@@ -50,31 +52,30 @@ contract CryptoDevsTest is Test {
         uint256 sixMinutesFromNow = block.timestamp + 6 minutes;
         vm.warp(sixMinutesFromNow); // Increase blocktime by 10min
         vm.expectRevert("Ether sent is not correct");
-        testContract.mint();
+        _cryptoDevs.mint();
     }
 
     function testSetPaused() public {
-        assertEq(testContract._paused(), false);
-        testContract.setPaused(true);
-        assertEq(testContract._paused(), true);
+        assertEq(_cryptoDevs._paused(), false);
+        _cryptoDevs.setPaused(true);
+        assertEq(_cryptoDevs._paused(), true);
     }
 
     function testMintWhenPausedFail() public {
         testSetPaused();
         vm.expectRevert("Contract currently paused");
-        testContract.mint();
+        _cryptoDevs.mint();
     }
 
     function testPresaleMintPresaleNotStartedFail() public {
         vm.expectRevert("Presale is not running");
-        testContract.presaleMint();
+        _cryptoDevs.presaleMint();
     }
 
     function testPresaleMintPresaleNotWhitelistedFail() public {
-        testContract.startPresale();
+        _cryptoDevs.startPresale();
         vm.expectRevert("You are not whitelisted");
-        // TODO : fix failing test
         vm.prank(address(1));
-        testContract.presaleMint();
+        _cryptoDevs.presaleMint();
     }
 }
