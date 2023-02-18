@@ -11,11 +11,14 @@ contract CryptoDevsTest is Test {
     MockWhitelist private _mockWhitelist;
     address private whitelistContractAddr;
     string private metaDataURL;
+    address payable public constant whitelistedAddr = payable(address(0x6969));
+    address payable public constant notWhitelistedAddr = payable(address(0x1111));
 
     function setUp() public {
         metaDataURL = 'testurl';
         _mockWhitelist = new MockWhitelist();
         _cryptoDevs = new CryptoDevs(metaDataURL, address(_mockWhitelist));
+        _mockWhitelist.addToWhitelist(whitelistedAddr);
     }
 
     function testContractInit() public {
@@ -75,7 +78,14 @@ contract CryptoDevsTest is Test {
     function testPresaleMintPresaleNotWhitelistedFail() public {
         _cryptoDevs.startPresale();
         vm.expectRevert("You are not whitelisted");
-        vm.prank(address(1));
+        vm.startPrank(notWhitelistedAddr);
+        _cryptoDevs.presaleMint();
+    }
+
+     function testPresaleMintPresaleNoEthFail() public {
+        _cryptoDevs.startPresale();
+        vm.expectRevert("Ether sent is not correct");
+        vm.startPrank(whitelistedAddr);
         _cryptoDevs.presaleMint();
     }
 }
