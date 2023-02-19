@@ -98,7 +98,20 @@ contract CryptoDevsTest is Test {
         _cryptoDevs.startPresale();
         assertEq(_cryptoDevs.tokenIds(), 0);
         vm.startPrank(whitelistedAddr);
-        _cryptoDevs.presaleMint{value: 1 ether}();
+        _cryptoDevs.presaleMint{value: 0.01 ether}();
+        assertEq(_cryptoDevs.tokenIds(), 1);
+        address owner_of = _cryptoDevs.ownerOf(1);
+        assertEq(whitelistedAddr, owner_of);
+        vm.stopPrank();
+    }
+
+    function testMint() public {
+        testMintPresaleNotEndedFail();
+        uint256 sixMinutesFromNow = block.timestamp + 6 minutes;
+        vm.warp(sixMinutesFromNow); // Increase blocktime by 10min
+        assertEq(_cryptoDevs.tokenIds(), 0);
+        vm.startPrank(whitelistedAddr);
+        _cryptoDevs.mint{value: 0.01 ether}();
         assertEq(_cryptoDevs.tokenIds(), 1);
         address owner_of = _cryptoDevs.ownerOf(1);
         assertEq(whitelistedAddr, owner_of);
