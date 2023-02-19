@@ -12,10 +12,11 @@ contract CryptoDevsTest is Test {
     address private whitelistContractAddr;
     string private metaDataURL;
     address payable public constant whitelistedAddr = payable(address(0x6969));
-    address payable public constant notWhitelistedAddr = payable(address(0x1111));
+    address payable public constant notWhitelistedAddr =
+        payable(address(0x1111));
 
     function setUp() public {
-        metaDataURL = 'testurl';
+        metaDataURL = "testurl";
         _mockWhitelist = new MockWhitelist();
         _cryptoDevs = new CryptoDevs(metaDataURL, address(_mockWhitelist));
         vm.startPrank(whitelistedAddr);
@@ -73,6 +74,12 @@ contract CryptoDevsTest is Test {
         _cryptoDevs.mint();
     }
 
+    function testPresaleMintWhenPausedFail() public {
+        testSetPaused();
+        vm.expectRevert("Contract currently paused");
+        _cryptoDevs.presaleMint();
+    }
+
     function testPresaleMintPresaleNotStartedFail() public {
         vm.expectRevert("Presale is not running");
         _cryptoDevs.presaleMint();
@@ -117,4 +124,27 @@ contract CryptoDevsTest is Test {
         assertEq(whitelistedAddr, owner_of);
         vm.stopPrank();
     }
+
+    function testWithdrawFailNotOwner() public {
+        vm.startPrank(address(9999));
+        vm.expectRevert("Ownable: caller is not the owner");
+        _cryptoDevs.withdraw();
+        vm.stopPrank();
+    }
+
+    function testWithdraw() public {
+        address _cryptoDevsAddr = address(_cryptoDevs);
+        vm.deal(_cryptoDevsAddr, 0.01 ether);
+        uint256 initBalance = _cryptoDevsAddr.balance;
+        _cryptoDevs.withdraw();
+        uint256 remainingBalance = _cryptoDevsAddr.balance;
+        assertEq(initBalance, 0.01 ether);
+        assertEq(remainingBalance, 0);
+    }
+
+    // Function to receive Ether. msg.data must be empty
+    receive() external payable {}
+
+    // Fallback function is called when msg.data is not empty
+    fallback() external payable {}
 }
