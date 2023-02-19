@@ -5,10 +5,10 @@ import "forge-std/src/Test.sol";
 import "../src/CryptoDevs.sol";
 import "./MockWhitelist.sol";
 
-
 contract CryptoDevsTest is Test {
     CryptoDevs public _cryptoDevs;
     MockWhitelist private _mockWhitelist;
+    ERC721 private _baseERC721;
     address private whitelistContractAddr;
     string private metaDataURL;
     address payable public constant whitelistedAddr = payable(address(0x6969));
@@ -18,7 +18,10 @@ contract CryptoDevsTest is Test {
         metaDataURL = 'testurl';
         _mockWhitelist = new MockWhitelist();
         _cryptoDevs = new CryptoDevs(metaDataURL, address(_mockWhitelist));
+        vm.startPrank(whitelistedAddr);
+        vm.deal(whitelistedAddr, 1 ether);
         _mockWhitelist.addToWhitelist(whitelistedAddr);
+        vm.stopPrank();
     }
 
     function testContractInit() public {
@@ -80,12 +83,25 @@ contract CryptoDevsTest is Test {
         vm.expectRevert("You are not whitelisted");
         vm.startPrank(notWhitelistedAddr);
         _cryptoDevs.presaleMint();
+        vm.stopPrank();
     }
 
-     function testPresaleMintPresaleNoEthFail() public {
+    function testPresaleMintPresaleNoEthFail() public {
         _cryptoDevs.startPresale();
         vm.expectRevert("Ether sent is not correct");
         vm.startPrank(whitelistedAddr);
         _cryptoDevs.presaleMint();
+        vm.stopPrank();
+    }
+
+    function testPresaleMint() public {
+        _cryptoDevs.startPresale();
+        assertEq(_cryptoDevs.tokenIds(), 0);
+        vm.startPrank(whitelistedAddr);
+        _cryptoDevs.presaleMint{value: 1 ether}();
+        assertEq(_cryptoDevs.tokenIds(), 1);
+        address owner_of = _cryptoDevs.ownerOf(1);
+        assertEq(whitelistedAddr, owner_of);
+        vm.stopPrank();
     }
 }
