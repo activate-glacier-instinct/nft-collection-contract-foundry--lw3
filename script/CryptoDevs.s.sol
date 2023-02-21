@@ -9,9 +9,13 @@ contract CryptoDevsScript is Script {
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        string memory metadataUrl = vm.envString("METADATA_URL");
+        address whitelistAddress = vm.envAddress("WHITELIST_CONTRACT_ADDRESS");
+
         vm.startBroadcast(deployerPrivateKey);
 
-        // CryptoDevs cryptoDevs = new CryptoDevs(2); // Max whitelist is 2 addresses
+        
+        new CryptoDevs(metadataUrl, whitelistAddress);
 
         vm.stopBroadcast();
     }
