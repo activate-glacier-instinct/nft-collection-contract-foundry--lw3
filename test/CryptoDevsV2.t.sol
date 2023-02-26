@@ -2,11 +2,11 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/src/Test.sol";
-import "../src/CryptoDevs.sol";
+import "../src/CryptoDevsV2.sol";
 import "../src/MockWhitelist.sol";
 
 contract CryptoDevsTest is Test {
-    CryptoDevs public _cryptoDevs;
+    CryptoDevsV2 public _cryptoDevs;
     MockWhitelist private _mockWhitelist;
     ERC721 private _baseERC721;
     address private whitelistContractAddr;
@@ -18,7 +18,7 @@ contract CryptoDevsTest is Test {
     function setUp() public {
         metaDataURL = "testurl";
         _mockWhitelist = new MockWhitelist(2);
-        _cryptoDevs = new CryptoDevs(metaDataURL, address(_mockWhitelist));
+        _cryptoDevs = new CryptoDevsV2(metaDataURL, address(_mockWhitelist));
         vm.startPrank(whitelistedAddr);
         vm.deal(whitelistedAddr, 1 ether);
         _mockWhitelist.addAddressToWhitelist();

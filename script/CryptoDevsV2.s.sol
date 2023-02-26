@@ -2,9 +2,9 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/src/Script.sol";
-import { CryptoDevs } from '../src/CryptoDevs.sol';
+import { CryptoDevsV2 } from '../src/CryptoDevsV2.sol';
 
-contract CryptoDevsScript is Script {
+contract CryptoDevsV2Script is Script {
     function setUp() public {}
 
     function run() public {
@@ -15,7 +15,7 @@ contract CryptoDevsScript is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         
-        new CryptoDevs(metadataUrl, whitelistAddress);
+        new CryptoDevsV2(metadataUrl, whitelistAddress);
 
         vm.stopBroadcast();
     }

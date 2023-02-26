@@ -5,7 +5,7 @@ import "openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721Enumerabl
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "./IWhitelist.sol";
 
-contract CryptoDevs is ERC721Enumerable, Ownable {
+contract CryptoDevsV2 is ERC721Enumerable, Ownable {
     /**
      * @dev _baseTokenURI for computing {tokenURI}. If set, the resulting URI for each
      * token will be the concatenation of the `baseURI` and the `tokenId`.
